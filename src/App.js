@@ -1,4 +1,3 @@
-import "./App.css";
 import { useState } from "react";
 import { WordRow } from "./WordRow";
 import { DndProvider } from "react-dnd";
@@ -14,40 +13,65 @@ function App() {
   );
 
   function processData() {
-    var text = rawData.replace(/[^0-9a-z \n]/gi, "");
-    // text = text.replace(commonWordsRegex, '');
-    text = text.toLowerCase();
-
-    const lines = text.split("\n");
+    const lines = rawData.split("\n");
     let data = {};
+
     for (const line of lines) {
-      const trimmed = line.trim();
-      if (data[trimmed] === undefined) {
-        data[trimmed] = 1;
+      const cleaned = processRow(line);
+
+      if (data[cleaned] === undefined) {
+        data[cleaned] = {
+          original: line,
+          visible: cleaned,
+          count: 1,
+        };
       } else {
-        data[trimmed] += 1;
+        // data[cleaned].count += 1;
       }
     }
 
-    setProcessedData(Object.entries(data));
+    console.log(Object.entries(data));
+    setProcessedData(Object.values(data));
+  }
+
+  function processRow(row) {
+    let text = row.replace(/[^0-9a-z \n]/gi, "");
+    text = text.toLowerCase();
+    text = text.trim();
+    return text;
+  }
+
+  function deleteRow(word) {
+    let data = processedData.filter((d) => d.visible !== word);
+    setProcessedData(data);
   }
 
   const processedRows = processedData.map((d) => (
-    <WordRow word={d[0]} count={d[1]} />
+    <WordRow word={d.visible} count={d.count} deleteThis={deleteRow} />
   ));
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header"></header>
+      <main>
         <DndProvider backend={HTML5Backend}>
-          <textarea
-            value={rawData}
-            onChange={(e) => setRawData(e.target.value)}
-          ></textarea>
-          <button onClick={processData}>Count Content</button>
-          <div>{processedRows}</div>
+          <div class="container justify-items-center">
+            <div class="">
+              <h2 class="text-4xl font-bold"> Count and Combine </h2>
+            </div>
+
+            <div class="">
+              <textarea
+                value={rawData}
+                onChange={(e) => setRawData(e.target.value)}
+              ></textarea>
+              <button onClick={processData}>Count Content</button>
+            </div>
+          </div>
+
+          <div class="">{processedRows}</div>
         </DndProvider>
-      </header>
+      </main>
     </div>
   );
 }
