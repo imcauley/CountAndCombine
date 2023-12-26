@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { WordRow } from "./WordRow";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { CSVLink, CSVDownload } from "react-csv";
 
 function App() {
   const [rawData, setRawData] = useState("");
   const [processedData, setProcessedData] = useState([]);
+  const [csvData, setCsvData] = useState([]);
   const commonWords = ["the", "and", "or", "but"];
 
   function processData() {
@@ -64,17 +66,8 @@ function App() {
     setProcessedData(items);
   }
 
-  function addToCount(word, added) {
-    // let data = processedData.map((d) => {
-    //   if (d.visible === word) {
-    //     let newWord = d;
-    //     newWord.count += added;
-    //     return newWord;
-    //   } else {
-    //     return d;
-    //   }
-    // });
-    // setProcessedData(data);
+  function createCsvData() {
+    setCsvData(processedData.map((i) => [i.visible, i.count]));
   }
 
   const processedRows = processedData.map((d, index) => (
@@ -84,19 +77,17 @@ function App() {
       count={d.count}
       index={index}
       deleteThis={deleteRow}
-      addToCount={addToCount}
     />
   ));
 
   return (
-    <div className="App">
+    <div className="App w-full">
       <header className="App-header"></header>
       <main>
-        <div className="container justify-items-center">
+        <div className="grid container justify-items-center">
           <div className="w-full">
             <h2 className="text-4xl font-bold"> Count and Combine </h2>
           </div>
-
           <div className="w-full">
             <textarea
               value={rawData}
@@ -104,9 +95,13 @@ function App() {
             ></textarea>
             <button onClick={processData}>Count Content</button>
           </div>
+          <CSVLink data={csvData} asyncOnClick={true} onClick={createCsvData}>
+            Download me
+          </CSVLink>
+          ;
         </div>
 
-        <div className="grid justify-items-center">
+        <div className="grid justify-items-center w-full">
           <DragDropContext droppableId="word-dnd" onDragEnd={onDragEnd}>
             <Droppable droppableId="word-dnd" isCombineEnabled>
               {(provided) => (
