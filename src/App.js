@@ -1,16 +1,11 @@
 import { useState } from "react";
 import { WordRow } from "./WordRow";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
+import { DragDropContext, Droppable } from "react-beautiful-dnd";
 
 function App() {
   const [rawData, setRawData] = useState("");
   const [processedData, setProcessedData] = useState([]);
   const commonWords = ["the", "and", "or", "but"];
-  const commonWordsRegex = new RegExp(
-    "[\b" + commonWords.join("\b|\b") + "\b]",
-    "gi"
-  );
 
   function processData() {
     const lines = rawData.split("\n");
@@ -26,11 +21,10 @@ function App() {
           count: 1,
         };
       } else {
-        // data[cleaned].count += 1;
+        data[cleaned].count += 1;
       }
     }
 
-    console.log(Object.entries(data));
     setProcessedData(Object.values(data));
   }
 
@@ -41,36 +35,85 @@ function App() {
     return text;
   }
 
-  function deleteRow(word) {
-    let data = processedData.filter((d) => d.visible !== word);
-    setProcessedData(data);
+  const deleteRow = (word) => {
+    setProcessedData(processedData.filter((d) => d.visible !== word));
+  };
+
+  function onDragEnd(result) {
+    if (!result.destination) return;
+    const items = Array.from(processedData);
+    console.log(result);
+    if (result.combine) {
+      // super simple: just removing the dragging item
+      items.splice(result.source.index, 1);
+      setProcessedData(items);
+      return;
+    }
+
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setProcessedData(items);
   }
 
-  const processedRows = processedData.map((d) => (
-    <WordRow word={d.visible} count={d.count} deleteThis={deleteRow} />
+  function addToCount(word, added) {
+    // let data = processedData.map((d) => {
+    //   if (d.visible === word) {
+    //     let newWord = d;
+    //     newWord.count += added;
+    //     return newWord;
+    //   } else {
+    //     return d;
+    //   }
+    // });
+    // setProcessedData(data);
+  }
+
+  const processedRows = processedData.map((d, index) => (
+    <WordRow
+      key={d.visible}
+      word={d.visible}
+      count={d.count}
+      index={index}
+      deleteThis={deleteRow}
+      addToCount={addToCount}
+    />
   ));
 
   return (
     <div className="App">
       <header className="App-header"></header>
       <main>
-        <DndProvider backend={HTML5Backend}>
-          <div class="container justify-items-center">
-            <div class="">
-              <h2 class="text-4xl font-bold"> Count and Combine </h2>
-            </div>
-
-            <div class="">
-              <textarea
-                value={rawData}
-                onChange={(e) => setRawData(e.target.value)}
-              ></textarea>
-              <button onClick={processData}>Count Content</button>
-            </div>
+        <div className="container justify-items-center">
+          <div className="w-full">
+            <h2 className="text-4xl font-bold"> Count and Combine </h2>
           </div>
 
-          <div class="">{processedRows}</div>
-        </DndProvider>
+          <div className="w-full">
+            <textarea
+              value={rawData}
+              onChange={(e) => setRawData(e.target.value)}
+            ></textarea>
+            <button onClick={processData}>Count Content</button>
+          </div>
+        </div>
+
+        <div className="grid justify-items-center">
+          <DragDropContext droppableId="word-dnd" onDragEnd={onDragEnd}>
+            <Droppable droppableId="word-dnd" isCombineEnabled>
+              {(provided) => (
+                <ul
+                  className="word-dnd"
+                  ref={provided.innerRef}
+                  {...provided.draggableProps}
+                  {...provided.dragHandleProps}
+                >
+                  {processedRows} {provided.placeholder}
+                </ul>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </div>
       </main>
     </div>
   );
