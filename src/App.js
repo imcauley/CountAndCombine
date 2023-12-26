@@ -10,6 +10,8 @@ function App() {
   const commonWords = ["the", "and", "or", "but"];
 
   function processData() {
+    // eslint-disable-next-line eqeqeq
+    if (rawData == "") return;
     const lines = rawData.split("\n");
     let data = {};
 
@@ -28,6 +30,10 @@ function App() {
     }
 
     setProcessedData(Object.values(data));
+  }
+
+  function resetData() {
+    setProcessedData([]);
   }
 
   function processRow(row) {
@@ -80,6 +86,25 @@ function App() {
     />
   ));
 
+  const inputHTML = (
+    <div>
+      <textarea
+        value={rawData}
+        onChange={(e) => setRawData(e.target.value)}
+      ></textarea>
+      <button onClick={processData}>Count Content</button>
+    </div>
+  );
+
+  const editHTML = (
+    <div>
+      <button onClick={resetData}>Reset</button>
+      <CSVLink data={csvData} asyncOnClick={true} onClick={createCsvData}>
+        Download me
+      </CSVLink>
+    </div>
+  );
+
   return (
     <div className="App w-full">
       <header className="App-header"></header>
@@ -88,17 +113,7 @@ function App() {
           <div className="w-full">
             <h2 className="text-4xl font-bold"> Count and Combine </h2>
           </div>
-          <div className="w-full">
-            <textarea
-              value={rawData}
-              onChange={(e) => setRawData(e.target.value)}
-            ></textarea>
-            <button onClick={processData}>Count Content</button>
-          </div>
-          <CSVLink data={csvData} asyncOnClick={true} onClick={createCsvData}>
-            Download me
-          </CSVLink>
-          ;
+          {processedData.length === 0 ? inputHTML : editHTML}
         </div>
 
         <div className="grid justify-items-center w-full">
