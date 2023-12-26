@@ -40,16 +40,24 @@ function App() {
   };
 
   function onDragEnd(result) {
-    if (!result.destination) return;
-    const items = Array.from(processedData);
-    console.log(result);
     if (result.combine) {
       // super simple: just removing the dragging item
-      items.splice(result.source.index, 1);
-      setProcessedData(items);
+      const items = Array.from(processedData);
+      const target = result.combine.draggableId;
+      const [removedItem] = items.splice(result.source.index, 1);
+      setProcessedData(
+        items.map((i) =>
+          i.visible === target
+            ? { ...i, count: i.count + removedItem.count }
+            : i
+        )
+      );
       return;
     }
 
+    if (!result.destination) return;
+
+    const items = Array.from(processedData);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
