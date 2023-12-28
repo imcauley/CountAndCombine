@@ -2,6 +2,7 @@ import { useState } from "react";
 import { WordRow } from "./WordRow";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { CSVLink, CSVDownload } from "react-csv";
+import { Button } from "@mui/material";
 
 function App() {
   const [rawData, setRawData] = useState("");
@@ -92,45 +93,51 @@ function App() {
         value={rawData}
         onChange={(e) => setRawData(e.target.value)}
       ></textarea>
-      <button onClick={processData}>Count Content</button>
+      <Button variant="contained" onClick={processData}>
+        Count Content
+      </Button>
     </div>
   );
 
   const editHTML = (
     <div>
-      <button onClick={resetData}>Reset</button>
-      <CSVLink data={csvData} asyncOnClick={true} onClick={createCsvData}>
-        Download me
-      </CSVLink>
+      <Button variant="contained" onClick={resetData}>
+        Reset
+      </Button>
+      <Button variant="contained">
+        <CSVLink data={csvData} asyncOnClick={true} onClick={createCsvData}>
+          Download CSV
+        </CSVLink>
+      </Button>
     </div>
   );
 
   return (
-    <div className="App w-full">
+    <div className="App">
       <header className="App-header"></header>
       <main>
-        <div className="grid container justify-items-center">
-          <div className="w-full">
+        <div className="container justify-items-center w-full mx-10 ">
+          <div className="">
             <h2 className="text-4xl font-bold"> Count and Combine </h2>
+            {processedData.length === 0 ? inputHTML : editHTML}
           </div>
-          {processedData.length === 0 ? inputHTML : editHTML}
-        </div>
 
-        <div className="grid justify-items-center w-full">
-          <DragDropContext droppableId="word-dnd" onDragEnd={onDragEnd}>
-            <Droppable droppableId="word-dnd" isCombineEnabled>
-              {(provided) => (
-                <ul
-                  className="word-dnd"
-                  ref={provided.innerRef}
-                  {...provided.draggableProps}
-                  {...provided.dragHandleProps}
-                >
-                  {processedRows} {provided.placeholder}
-                </ul>
-              )}
-            </Droppable>
-          </DragDropContext>
+          <div>
+            <DragDropContext droppableId="word-dnd" onDragEnd={onDragEnd}>
+              <Droppable droppableId="word-dnd" isCombineEnabled>
+                {(provided) => (
+                  <ul
+                    className="word-dnd"
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    {...provided.dragHandleProps}
+                  >
+                    {processedRows} {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </div>
         </div>
       </main>
     </div>
