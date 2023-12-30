@@ -7,8 +7,8 @@ import { TextField, Button } from "@mui/material";
 function App() {
   const [rawData, setRawData] = useState("");
   const [processedData, setProcessedData] = useState([]);
+  const [commonWords, setCommonWords] = useState(["the", "and", "or", "but"]);
   const [csvData, setCsvData] = useState([]);
-  const commonWords = ["the", "and", "or", "but"];
 
   function processData() {
     // eslint-disable-next-line eqeqeq
@@ -43,7 +43,9 @@ function App() {
 
   function processRow(row) {
     let text = row.replace(/[^0-9a-z \n]/gi, "");
+    const re = new RegExp(commonWords.join("|"), "ig");
     text = text.toLowerCase();
+    text = text.replace(re, "");
     text = text.trim();
     return text;
   }
@@ -102,6 +104,14 @@ function App() {
         value={rawData}
         onChange={(e) => setRawData(e.target.value)}
       />
+      <TextField
+        id="outlined-multiline-static"
+        label="Common Words (separated by comma, no spaces)"
+        multiline
+        rows={4}
+        value={commonWords.join(",")}
+        onChange={(e) => setCommonWords(e.target.value.split(","))}
+      />
       <Button variant="contained" onClick={processData}>
         Count Content
       </Button>
@@ -122,10 +132,10 @@ function App() {
   );
 
   return (
-    <div className="App">
+    <div className="App h-full bg-slate-100">
       <header className="App-header"></header>
       <main>
-        <div className="container justify-items-center w-full mx-10 ">
+        <div className="container justify-items-center w-full mx-10">
           <div className="">
             <h2 className="text-4xl font-bold"> Count and Combine </h2>
             {processedData.length === 0 ? inputHTML : editHTML}
