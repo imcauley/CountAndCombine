@@ -20,7 +20,7 @@ export function WordRow({
             className="w-full p-6 m-2"
           >
             <li className="word-dnd flex justify-between">
-              <p> {count} </p>
+              <b> {count} </b>
               <p>{word} </p>
               <Button variant="contained" onClick={() => deleteThis(word)}>
                 {" "}

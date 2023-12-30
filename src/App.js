@@ -30,7 +30,11 @@ function App() {
       }
     }
 
-    setProcessedData(Object.values(data));
+    let cmp = (a, b) => {
+      return a.count < b.count;
+    };
+
+    setProcessedData(Object.values(data).sort(cmp));
   }
 
   function resetData() {
