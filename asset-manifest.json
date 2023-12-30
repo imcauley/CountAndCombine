@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/CountAndCombine/static/css/main.a14f35c9.css",
+    "main.js": "/CountAndCombine/static/js/main.77d605e9.js",
+    "static/js/787.5e628511.chunk.js": "/CountAndCombine/static/js/787.5e628511.chunk.js",
+    "index.html": "/CountAndCombine/index.html",
+    "main.a14f35c9.css.map": "/CountAndCombine/static/css/main.a14f35c9.css.map",
+    "main.77d605e9.js.map": "/CountAndCombine/static/js/main.77d605e9.js.map",
+    "787.5e628511.chunk.js.map": "/CountAndCombine/static/js/787.5e628511.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a14f35c9.css",
+    "static/js/main.77d605e9.js"
+  ]
+}
