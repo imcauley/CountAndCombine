@@ -2,7 +2,7 @@ import { useState } from "react";
 import { WordRow } from "./WordRow";
 import { DragDropContext, Droppable } from "react-beautiful-dnd";
 import { CSVLink, CSVDownload } from "react-csv";
-import { Button } from "@mui/material";
+import { TextField, Button } from "@mui/material";
 
 function App() {
   const [rawData, setRawData] = useState("");
@@ -89,10 +89,15 @@ function App() {
 
   const inputHTML = (
     <div>
-      <textarea
+      <TextField
+        id="outlined-multiline-static"
+        label="Input List"
+        multiline
+        rows={4}
+        defaultValue=""
         value={rawData}
         onChange={(e) => setRawData(e.target.value)}
-      ></textarea>
+      />
       <Button variant="contained" onClick={processData}>
         Count Content
       </Button>
